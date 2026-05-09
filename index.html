@@ -1,0 +1,2268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Restaurant Operations Management System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --color-1: #DC3545;
+            --color-2: #FF9800;
+            --color-3: #2196F3;
+            --color-4: #4CAF50;
+            --color-5: #9C27B0;
+            --color-6: #009688;
+            --color-7: #1565C0;
+            --color-8: #8BC34A;
+            --color-9: #FFC107;
+            --color-10: #795548;
+            --color-11: #3F51B5;
+            --color-12: #B71C1C;
+            --color-13: #37474F;
+        }
+
+        body {
+            font-family: 'Open Sans', sans-serif;
+            background-color: #F5F5F5;
+            color: #222;
+        }
+
+        /* TOP NAVIGATION BAR */
+        .top-nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background-color: #222;
+            color: white;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 64px;
+            z-index: 1000;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .nav-brand {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+            font-size: 18px;
+            padding: 0 24px;
+            white-space: nowrap;
+        }
+
+        .nav-tabs {
+            display: flex;
+            flex: 1;
+            margin-left: 24px;
+            gap: 0;
+            overflow-x: auto;
+        }
+
+        .nav-tab {
+            padding: 20px 16px;
+            cursor: pointer;
+            background-color: transparent;
+            color: #999;
+            border: none;
+            font-family: 'Open Sans', sans-serif;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-bottom: 3px solid transparent;
+            white-space: nowrap;
+            transition: all 0.2s;
+        }
+
+        .nav-tab:hover {
+            color: white;
+            background-color: rgba(255,255,255,0.05);
+        }
+
+        .nav-tab.active {
+            color: white;
+            border-bottom-color: currentColor;
+        }
+
+        .nav-tab.active[data-color="1"] { color: var(--color-1); border-bottom-color: var(--color-1); }
+        .nav-tab.active[data-color="2"] { color: var(--color-2); border-bottom-color: var(--color-2); }
+        .nav-tab.active[data-color="3"] { color: var(--color-3); border-bottom-color: var(--color-3); }
+        .nav-tab.active[data-color="4"] { color: var(--color-4); border-bottom-color: var(--color-4); }
+        .nav-tab.active[data-color="5"] { color: var(--color-5); border-bottom-color: var(--color-5); }
+        .nav-tab.active[data-color="6"] { color: var(--color-6); border-bottom-color: var(--color-6); }
+        .nav-tab.active[data-color="7"] { color: var(--color-7); border-bottom-color: var(--color-7); }
+        .nav-tab.active[data-color="8"] { color: var(--color-8); border-bottom-color: var(--color-8); }
+        .nav-tab.active[data-color="9"] { color: var(--color-9); border-bottom-color: var(--color-9); }
+        .nav-tab.active[data-color="10"] { color: var(--color-10); border-bottom-color: var(--color-10); }
+        .nav-tab.active[data-color="11"] { color: var(--color-11); border-bottom-color: var(--color-11); }
+        .nav-tab.active[data-color="12"] { color: var(--color-12); border-bottom-color: var(--color-12); }
+        .nav-tab.active[data-color="13"] { color: var(--color-13); border-bottom-color: var(--color-13); }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding-right: 24px;
+        }
+
+        .settings-btn {
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            font-size: 24px;
+            padding: 8px;
+        }
+
+        /* SETTINGS MODAL */
+        .settings-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .settings-modal.active {
+            display: flex;
+        }
+
+        .settings-content {
+            background: white;
+            border-radius: 8px;
+            padding: 32px;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+
+        .settings-content h2 {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+            font-size: 20px;
+            margin-bottom: 24px;
+        }
+
+        .settings-field {
+            margin-bottom: 20px;
+        }
+
+        .settings-field label {
+            display: block;
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 600;
+            font-size: 12px;
+            text-transform: uppercase;
+            color: #999;
+            margin-bottom: 8px;
+            letter-spacing: 1px;
+        }
+
+        .settings-field input[type="text"],
+        .settings-field input[type="file"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-family: 'Open Sans', sans-serif;
+            font-size: 14px;
+        }
+
+        .logo-preview {
+            width: 80px;
+            height: 80px;
+            border: 2px dashed #999;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 12px 0;
+            background-size: contain;
+            background-position: center;
+            background-repeat: no-repeat;
+            cursor: pointer;
+            font-size: 12px;
+            color: #999;
+        }
+
+        .settings-buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 28px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 600;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background-color: #222;
+            color: white;
+            flex: 1;
+        }
+
+        .btn-primary:hover {
+            background-color: #444;
+        }
+
+        .btn-secondary {
+            background-color: #f0f0f0;
+            color: #222;
+            flex: 1;
+        }
+
+        .btn-secondary:hover {
+            background-color: #e0e0e0;
+        }
+
+        /* MAIN CONTENT */
+        .main-container {
+            margin-top: 64px;
+            min-height: calc(100vh - 64px);
+            background-color: #F5F5F5;
+        }
+
+        .content-area {
+            display: none;
+        }
+
+        .content-area.active {
+            display: block;
+        }
+
+        /* TEMPLATE HEADER */
+        .template-header {
+            padding: 24px 32px;
+            color: white;
+            display: grid;
+            grid-template-columns: 80px 1fr auto;
+            gap: 24px;
+            align-items: start;
+        }
+
+        .logo-box {
+            width: 80px;
+            height: 80px;
+            border: 2px dashed rgba(255,255,255,0.5);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            background-size: contain;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-color: rgba(255,255,255,0.1);
+            cursor: pointer;
+            text-align: center;
+            padding: 8px;
+        }
+
+        .header-info {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .header-name {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+            font-size: 20px;
+            margin-bottom: 4px;
+        }
+
+        .header-address {
+            font-size: 13px;
+            opacity: 0.9;
+            margin-bottom: 4px;
+        }
+
+        .header-manager {
+            font-size: 13px;
+            opacity: 0.9;
+        }
+
+        .header-manager input {
+            background: transparent;
+            border: none;
+            border-bottom: 1px solid rgba(255,255,255,0.4);
+            color: white;
+            font-size: 13px;
+            width: 200px;
+            padding: 2px 4px;
+        }
+
+        .header-manager input::placeholder {
+            color: rgba(255,255,255,0.6);
+        }
+
+        .header-right {
+            text-align: right;
+        }
+
+        .header-right h1 {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+            font-size: 16px;
+            margin-bottom: 8px;
+        }
+
+        .header-date {
+            font-size: 13px;
+            opacity: 0.9;
+        }
+
+        /* TEMPLATE CONTENT */
+        .template-content {
+            padding: 32px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section {
+            margin-bottom: 24px;
+            background: white;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .section-header {
+            padding: 10px 16px;
+            background-color: currentColor;
+            color: white;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .section-content {
+            padding: 16px;
+        }
+
+        .task-row {
+            display: grid;
+            grid-template-columns: 24px 1fr auto;
+            gap: 12px;
+            padding: 12px 16px;
+            align-items: start;
+            border-bottom: 1px solid #F0F0F0;
+            background-color: #FFFFFF;
+        }
+
+        .task-row.critical {
+            background-color: var(--critical-bg);
+            border-left: 3px solid currentColor;
+            padding-left: 13px;
+        }
+
+        .task-row:last-child {
+            border-bottom: none;
+        }
+
+        .checkbox {
+            width: 24px;
+            height: 24px;
+            border: 2px solid #ddd;
+            border-radius: 3px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: white;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .checkbox.checked {
+            background-color: currentColor;
+            border-color: currentColor;
+            color: white;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        .task-content {
+            flex: 1;
+        }
+
+        .task-name {
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 600;
+            font-size: 13px;
+            color: #222;
+            margin-bottom: 2px;
+        }
+
+        .task-description {
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 400;
+            font-size: 11px;
+            color: #888;
+            font-style: italic;
+        }
+
+        .task-fields {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            margin-top: 6px;
+        }
+
+        .field-group {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 10px;
+            color: #999;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .field-input {
+            border: none;
+            border-bottom: 1px solid currentColor;
+            opacity: 0.4;
+            width: 40px;
+            padding: 2px 4px;
+            font-family: 'Open Sans', sans-serif;
+            font-size: 11px;
+        }
+
+        .field-input.time {
+            width: 55px;
+        }
+
+        .field-input::placeholder {
+            color: #ccc;
+        }
+
+        .field-input:focus {
+            outline: none;
+            opacity: 1;
+        }
+
+        .delete-btn {
+            background: none;
+            border: none;
+            color: #ccc;
+            cursor: pointer;
+            font-size: 18px;
+            padding: 4px 8px;
+            transition: color 0.2s;
+        }
+
+        .delete-btn:hover {
+            color: #999;
+        }
+
+        .add-row-btn {
+            background: none;
+            border: none;
+            color: currentColor;
+            cursor: pointer;
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 600;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 12px 16px;
+            text-align: left;
+            transition: opacity 0.2s;
+        }
+
+        .add-row-btn:hover {
+            opacity: 0.7;
+        }
+
+        /* DASHBOARD */
+        .dashboard-title {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+            font-size: 28px;
+            margin-bottom: 8px;
+            color: #222;
+        }
+
+        .dashboard-subtitle {
+            font-size: 14px;
+            color: #888;
+            margin-bottom: 32px;
+        }
+
+        .overall-progress {
+            background: white;
+            padding: 24px;
+            border-radius: 4px;
+            margin-bottom: 32px;
+        }
+
+        .progress-label {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 600;
+            font-size: 13px;
+            text-transform: uppercase;
+            color: #999;
+            margin-bottom: 12px;
+            letter-spacing: 1px;
+        }
+
+        .progress-bar {
+            height: 24px;
+            background-color: #f0f0f0;
+            border-radius: 12px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: white;
+            font-size: 12px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--color-1), var(--color-13));
+            transition: width 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .template-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 32px;
+        }
+
+        .template-card {
+            background: white;
+            border: 1px solid #E8E8E8;
+            border-radius: 8px;
+            overflow: hidden;
+            transition: box-shadow 0.2s;
+        }
+
+        .template-card:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+
+        .card-color-band {
+            height: 6px;
+            background-color: currentColor;
+        }
+
+        .card-content {
+            padding: 16px;
+        }
+
+        .card-title {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+            font-size: 13px;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .card-progress {
+            margin-bottom: 12px;
+        }
+
+        .card-progress-bar {
+            height: 6px;
+            background-color: #f0f0f0;
+            border-radius: 3px;
+            overflow: hidden;
+            margin-bottom: 6px;
+        }
+
+        .card-progress-fill {
+            height: 100%;
+            background-color: currentColor;
+            transition: width 0.3s ease;
+        }
+
+        .card-stats {
+            font-size: 12px;
+            color: #888;
+            margin-bottom: 16px;
+        }
+
+        .card-link {
+            background: none;
+            border: none;
+            color: currentColor;
+            cursor: pointer;
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 600;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .card-link:hover {
+            opacity: 0.7;
+        }
+
+        .card-complete {
+            color: #4CAF50;
+            font-weight: 600;
+        }
+
+        /* DASHBOARD BUTTONS */
+        .dashboard-buttons {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 32px;
+        }
+
+        .dashboard-buttons .btn {
+            background-color: #222;
+            color: white;
+        }
+
+        .dashboard-buttons .btn:hover {
+            background-color: #444;
+        }
+
+        /* WEEKLY SCHEDULE TABLE */
+        .schedule-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        .schedule-table th,
+        .schedule-table td {
+            border: 1px solid #f0f0f0;
+            padding: 12px;
+            text-align: left;
+            font-size: 12px;
+        }
+
+        .schedule-table th {
+            background-color: #f9f9f9;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .schedule-table input {
+            width: 60px;
+            border: none;
+            border-bottom: 1px solid #ddd;
+            padding: 4px;
+            font-size: 12px;
+        }
+
+        .labor-calculator {
+            background: white;
+            padding: 20px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+
+        .calc-field {
+            display: grid;
+            grid-template-columns: 200px 1fr;
+            gap: 16px;
+            padding: 12px 0;
+            align-items: center;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .calc-field:last-child {
+            border-bottom: none;
+        }
+
+        .calc-label {
+            font-weight: 600;
+            font-size: 12px;
+        }
+
+        .calc-input {
+            border: none;
+            border-bottom: 1px solid #ddd;
+            padding: 6px 4px;
+            font-size: 12px;
+        }
+
+        .calc-value {
+            font-weight: 600;
+            color: #222;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 3px;
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-left: 8px;
+        }
+
+        .badge-ok {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .badge-low {
+            background-color: #FFC107;
+            color: #222;
+        }
+
+        .badge-critical {
+            background-color: #DC3545;
+            color: white;
+        }
+
+        /* INVENTORY TABLE */
+        .inventory-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        .inventory-table th,
+        .inventory-table td {
+            border: 1px solid #f0f0f0;
+            padding: 12px;
+            text-align: left;
+            font-size: 12px;
+        }
+
+        .inventory-table th {
+            background-color: #f9f9f9;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .inventory-table input {
+            border: none;
+            border-bottom: 1px solid #ddd;
+            padding: 4px;
+            font-size: 12px;
+            width: 80px;
+        }
+
+        .inventory-table input[type="checkbox"] {
+            width: 16px;
+            cursor: pointer;
+        }
+
+        /* TEXT AREAS */
+        textarea {
+            width: 100%;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 12px;
+            font-family: 'Open Sans', sans-serif;
+            font-size: 12px;
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .template-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .task-row {
+                grid-template-columns: 24px 1fr;
+                gap: 8px;
+            }
+
+            .task-fields {
+                grid-column: 1 / -1;
+                margin-left: 32px;
+            }
+
+            .template-header {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+
+            .header-manager input {
+                width: 100%;
+            }
+
+            .header-right {
+                text-align: left;
+            }
+
+            .nav-tabs {
+                margin-left: 12px;
+            }
+
+            .schedule-table th,
+            .schedule-table td {
+                padding: 8px;
+                font-size: 11px;
+            }
+
+            .schedule-table input {
+                width: 50px;
+            }
+        }
+
+        /* PRINT STYLES */
+        @media print {
+            .top-nav,
+            .settings-btn,
+            .dashboard-buttons,
+            .add-row-btn,
+            .delete-btn {
+                display: none !important;
+            }
+
+            .main-container {
+                margin-top: 0;
+            }
+
+            .template-content {
+                padding: 20px;
+            }
+
+            .content-area {
+                display: block !important;
+                page-break-after: always;
+            }
+
+            .content-area:last-child {
+                page-break-after: auto;
+            }
+
+            .section {
+                page-break-inside: avoid;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- TOP NAVIGATION -->
+    <div class="top-nav">
+        <div class="nav-brand">RESTAURANT OPS</div>
+        <div class="nav-tabs" id="navTabs"></div>
+        <div class="nav-right">
+            <button class="settings-btn" id="settingsBtn">⚙️</button>
+        </div>
+    </div>
+
+    <!-- SETTINGS MODAL -->
+    <div class="settings-modal" id="settingsModal">
+        <div class="settings-content">
+            <h2>Restaurant Settings</h2>
+            <div class="settings-field">
+                <label>Restaurant Name</label>
+                <input type="text" id="settingsName" placeholder="Enter restaurant name">
+            </div>
+            <div class="settings-field">
+                <label>Restaurant Address</label>
+                <input type="text" id="settingsAddress" placeholder="Enter address">
+            </div>
+            <div class="settings-field">
+                <label>Manager Name</label>
+                <input type="text" id="settingsManager" placeholder="Enter manager name">
+            </div>
+            <div class="settings-field">
+                <label>Restaurant Logo</label>
+                <div class="logo-preview" id="logoPreview">Click to upload</div>
+                <input type="file" id="logoUpload" accept="image/*" style="display:none;">
+            </div>
+            <div class="settings-buttons">
+                <button class="btn btn-primary" id="applySettingsBtn">Apply Settings</button>
+                <button class="btn btn-secondary" id="closeSettingsBtn">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-container">
+        <div id="contentArea"></div>
+    </div>
+
+    <script>
+        // CONFIGURATION
+        const TEMPLATES = [
+            {
+                id: 1,
+                name: 'Daily Opening Checklist',
+                color: '1',
+                colorHex: '#DC3545',
+                sections: [
+                    {
+                        name: 'Facility Inspection',
+                        tasks: [
+                            { name: 'Building exterior checked & secure', description: 'Check all external doors, windows, signage, and parking area for hazards or overnight damage before unlocking.', critical: true },
+                            { name: 'Entrance doors unlocked & entrance cleaned', description: 'Wipe down door handles, clear entrance matting, ensure pathway is clear.', critical: false },
+                            { name: 'Interior lights tested & working', description: 'Walk entire FOH & BOH switching on all lights. Note any blown bulbs.', critical: false },
+                            { name: 'Heating/cooling system set to correct temperature', description: 'Set thermostat to pre-service temperature. Check zone controls.', critical: false },
+                            { name: 'Signage (open/specials boards) updated', description: 'Update exterior chalkboards or digital boards with today\'s specials.', critical: false }
+                        ]
+                    },
+                    {
+                        name: 'Equipment & Safety',
+                        tasks: [
+                            { name: 'All refrigeration temperatures logged', description: 'Check each fridge/freezer with thermometer. Fridges: 1-4°C. Freezers: -18°C or below.', critical: true },
+                            { name: 'Gas & electrical equipment safety check', description: 'Inspect visible gas lines for odour. Check electrical panels for tripped breakers.', critical: true },
+                            { name: 'Fryer preheated & oil condition checked', description: 'Heat oil to correct temperature. Check oil colour & smell. Replace if dark or acrid-smelling.', critical: false },
+                            { name: 'Grill & oven preheated to correct temperatures', description: 'Allow minimum 20 minutes preheat time. Verify with thermometer.', critical: false },
+                            { name: 'POS system powered on & tested', description: 'Open system, run test transaction, verify receipt printer has paper.', critical: false },
+                            { name: 'Walk-in cooler temperature logged', description: 'Record internal temperature. Adjust if outside safe range.', critical: false },
+                            { name: 'Fire extinguishers accessible & seals intact', description: 'Do not move extinguishers. Verify pin & seal are unbroken.', critical: false },
+                            { name: 'First aid kit fully stocked', description: 'Check plasters, gloves, eye wash. Restock from supplies if needed.', critical: false }
+                        ]
+                    },
+                    {
+                        name: 'Kitchen Prep',
+                        tasks: [
+                            { name: 'Prep area sanitised & food-safe', description: 'Clean and sanitise all prep surfaces with food-safe solution before any food contact occurs.', critical: true },
+                            { name: 'Fresh produce inspected & stored correctly', description: 'Check for spoilage, mould, or wilting. Discard unfit produce. Store in correct containers.', critical: false },
+                            { name: 'Expiration dates verified on all opened products', description: 'Check all opened dairy, sauces, and proteins. Discard expired items.', critical: false },
+                            { name: 'Food storage organised (FIFO)', description: 'First In First Out — newer stock placed behind older stock.', critical: false },
+                            { name: 'Hand-washing stations stocked', description: 'Check soap dispensers, paper towels, and sanitiser at all stations.', critical: false },
+                            { name: 'Sanitiser buckets prepared at correct concentration', description: 'Mix sanitiser solution to manufacturer ratio. Test with strips.', critical: false },
+                            { name: 'Cutting boards clean & colour-coded correctly', description: 'Verify correct board colours are in use. No cross-contamination.', critical: false },
+                            { name: 'Ingredients at correct temperature before service', description: 'All refrigerated prep ingredients should be below 5°C until needed.', critical: false }
+                        ]
+                    },
+                    {
+                        name: 'Front of House',
+                        tasks: [
+                            { name: 'Dining area cleaned & tables set correctly', description: 'Wipe tables, set covers per standard layout, check chairs & floors.', critical: false },
+                            { name: 'Tables set properly (cutlery, glassware, napkins)', description: 'All covers complete. No chips, smears, or missing items.', critical: false },
+                            { name: 'Bathrooms cleaned, stocked & inspected', description: 'Check soap, hand towels, toilet paper. Clean fixtures & floors.', critical: false },
+                            { name: 'Host stand organised & reservation list printed', description: 'Print or load today\'s bookings. Confirm any special requirements.', critical: false },
+                            { name: 'Menus clean, complete & up to date', description: 'Wipe physical menus. Remove any out-of-date items or inserts.', critical: false },
+                            { name: 'Ambient temperature comfortable for guests', description: 'Final temperature check before doors open to guests.', critical: false }
+                        ]
+                    },
+                    {
+                        name: 'Staff Briefing',
+                        tasks: [
+                            { name: 'Full team arrived on time & in uniform', description: 'Account for all scheduled staff. Note any absences immediately.', critical: false },
+                            { name: 'Safety & hygiene briefing completed', description: 'Deliver daily safety reminder. Note any active allergies on bookings.', critical: false },
+                            { name: 'Daily specials communicated to all staff', description: 'Ensure all FOH staff can describe specials, including allergens.', critical: false },
+                            { name: 'Staff roles & sections assigned', description: 'Confirm table sections, bar assignments, and support roles.', critical: false },
+                            { name: 'Service standards reviewed', description: 'Remind team of any guest feedback or service priorities from yesterday.', critical: false }
+                        ]
+                    }
+                ]
+            },
+            {
+                id: 2,
+                name: 'Daily Closing Checklist',
+                color: '2',
+                colorHex: '#FF9800',
+                sections: [
+                    {
+                        name: 'End of Service',
+                        tasks: [
+                            { name: 'Cash reconciled & secured', description: 'Count till, match to POS reports. Place takings in safe. Do not leave cash unattended.', critical: true },
+                            { name: 'Final customer areas cleared & checked', description: 'Walk entire restaurant floor. Ensure all guests have left.', critical: false },
+                            { name: 'Reservation system updated for next service', description: 'Cancel no-shows, note special requests for tomorrow.', critical: false },
+                            { name: 'Daily sales figures recorded', description: 'Log total covers, revenue, and average spend in daily report.', critical: false }
+                        ]
+                    },
+                    {
+                        name: 'Kitchen Deep Clean',
+                        tasks: [
+                            { name: 'All cooking equipment cleaned & degreased', description: 'Full clean of fryers, grills, ovens, and ranges. Use correct degreasers per equipment type.', critical: true },
+                            { name: 'All food stored correctly before close', description: 'Cover, label, and date all stored food. Verify temperatures of all refrigeration units.', critical: true },
+                            { name: 'Surfaces sanitised (worktops, prep areas)', description: 'Full sanitise wipe-down of all food-contact surfaces.', critical: false },
+                            { name: 'Filters cleaned (extraction hood, fryer)', description: 'Remove and clean filters per schedule. Note any blockages.', critical: false },
+                            { name: 'Floors swept, mopped & dry', description: 'Sweep first, then mop with sanitising solution. Allow to dry.', critical: false },
+                            { name: 'Dishwasher cleaned & emptied', description: 'Run clean cycle. Empty and leave door open overnight.', critical: false },
+                            { name: 'Walk-in & reach-in checked & doors sealed', description: 'Final temperature log. Ensure all doors fully closed.', critical: false },
+                            { name: 'Waste bins emptied & replaced with fresh liners', description: 'All bins emptied, cleaned if needed, fresh liner fitted.', critical: false }
+                        ]
+                    },
+                    {
+                        name: 'Front of House Close',
+                        tasks: [
+                            { name: 'All tables cleared & reset for next service', description: 'Tables wiped, chairs straight, covers reset or removed.', critical: false },
+                            { name: 'Bar area cleaned & restocked', description: 'Clean bar surface, restock spirits, check garnish levels.', critical: false },
+                            { name: 'Bathrooms given final clean & restocked', description: 'Final clean of all facilities. Refill all dispensers.', critical: false },
+                            { name: 'Lost property checked & logged', description: 'Check all areas for guest belongings. Log any found items.', critical: false }
+                        ]
+                    },
+                    {
+                        name: 'Security',
+                        tasks: [
+                            { name: 'All entry points locked & secured', description: 'Walk perimeter — check all doors, windows, and gates. Test each lock physically.', critical: true },
+                            { name: 'Alarm system activated', description: 'Set alarm before final exit. Confirm zone activation.', critical: false },
+                            { name: 'All non-essential equipment powered off', description: 'Check all equipment is off — grills, fryers, ovens, unnecessary refrigeration, display screens.', critical: false },
+                            { name: 'CCTV system confirmed operational', description: 'Check recording light is active on all cameras.', critical: false }
+                        ]
+                    },
+                    {
+                        name: 'Manager Sign-off',
+                        tasks: [
+                            { name: 'All sections of closing checklist completed', description: 'Review and confirm all sections above are signed off.', critical: false },
+                            { name: 'Any issues documented in handover notes', description: 'Log any incidents, maintenance needs, or staff issues.', critical: false },
+                            { name: 'Closing summary recorded in Manager Daily Report', description: 'Complete daily report before leaving premises.', critical: false }
+                        ]
+                    }
+                ]
+            },
+            {
+                id: 3,
+                name: 'Weekly Schedule',
+                color: '3',
+                colorHex: '#2196F3',
+                isSchedule: true,
+                sections: [
+                    {
+                        name: 'Staff Schedule',
+                        roles: [
+                            'General Manager', 'Assistant Manager', 'Head Chef', 'Sous Chef',
+                            'Line Cook 1', 'Line Cook 2', 'Prep Cook', 'Dishwasher',
+                            'Head Server', 'Server 1', 'Server 2', 'Server 3',
+                            'Bartender', 'Host/Hostess', 'Busser'
+                        ]
+                    }
+                ]
+            },
+            {
+                id: 4,
+                name: 'Inventory Management',
+                color: '4',
+                colorHex: '#4CAF50',
+                isInventory: true,
+                sections: [
+                    {
+                        name: 'Current Inventory Levels',
+                        categories: {
+                            'PROTEINS': ['Chicken Breast', 'Ground Beef', 'Fish Fillets', 'Beef Ribs', 'Lamb Shoulder', 'Pork Belly', 'Bacon', 'Sausages'],
+                            'PRODUCE': ['Mixed Vegetables', 'Salad Leaves', 'Tomatoes', 'Onions', 'Garlic', 'Lemons', 'Limes', 'Fresh Herbs'],
+                            'DRY GOODS': ['Flour', 'Pasta', 'Rice', 'Breadcrumbs', 'Sugar', 'Salt', 'Cooking Oil', 'Olive Oil'],
+                            'DAIRY': ['Butter', 'Cream', 'Milk', 'Cheese', 'Eggs', 'Yoghurt'],
+                            'BAR SUPPLIES': ['House Wine (Red)', 'House Wine (White)', 'Beer Kegs', 'Gin', 'Vodka', 'Whiskey', 'Mixers', 'Garnishes'],
+                            'CLEANING': ['Sanitiser', 'Degreaser', 'Dishwasher tablets', 'Bin bags', 'Gloves', 'Paper towels']
+                        }
+                    },
+                    {
+                        name: 'Delivery Tracking',
+                        tasks: [
+                            { name: 'Date Received', description: 'Record delivery date', critical: false },
+                            { name: 'Supplier Name', description: 'Name of supplying vendor', critical: false },
+                            { name: 'Delivery Reference #', description: 'Invoice or reference number', critical: false },
+                            { name: 'Received By (Initials)', description: 'Staff member initials', critical: false },
+                            { name: 'Temperature at Delivery', description: 'Record temperature of chilled items', critical: false },
+                            { name: 'Items Rejected / Issues', description: 'Note any damaged or unsuitable items', critical: false }
+                        ]
+                    }
+                ]
+            },
+            {
+                id: 5,
+                name: 'Manager Daily Tasks',
+                color: '5',
+                colorHex: '#9C27B0',
+                sections: [
+                    {
+                        name: 'Today\'s Priorities',
+                        tasks: [
+                            { name: 'Priority 1', description: 'First task', critical: false },
+                            { name: 'Priority 2', description: 'Second task', critical: false },
+                            { name: 'Priority 3', description: 'Third task', critical: false }
+                        ]
+                    },
+                    {
+                        name: 'Daily Recurring Tasks',
+                        tasks: [
+                            { name: 'Review opening checklist completion', description: 'Check all 5 sections signed off. Follow up on any missed items.', critical: false },
+                            { name: 'Conduct floor walk (pre-service)', description: 'Physical walk of all areas. Identify anything not guest-ready.', critical: false },
+                            { name: 'Staff briefing delivered', description: 'Confirm daily specials, allergies, service priorities with team.', critical: false },
+                            { name: 'Customer feedback reviewed', description: 'Check Google, TripAdvisor, direct feedback from last 24 hours.', critical: false },
+                            { name: 'Cash float checked & correct', description: 'Verify float matches required amount before service opens.', critical: false },
+                            { name: 'Review closing checklist from previous night', description: 'Confirm all closing tasks were completed. Note any gaps.', critical: false }
+                        ]
+                    },
+                    {
+                        name: 'Weekly Tasks',
+                        tasks: [
+                            { name: 'Schedule reviewed & published for next week', description: 'Publish at least 5 days in advance. Confirm all shifts covered.', critical: false },
+                            { name: 'Labor cost % reviewed', description: 'Compare actual vs target. Adjust scheduling if needed.', critical: false },
+                            { name: 'Inventory order placed', description: 'Review inventory sheet and submit orders to suppliers.', critical: false },
+                            { name: 'Staff performance check-ins conducted', description: 'Brief 1:1 with at least 2 team members this week.', critical: false },
+                            { name: 'Supplier invoices processed', description: 'Match deliveries to invoices. Flag any discrepancies.', critical: false }
+                        ]
+                    },
+                    {
+                        name: 'Notes & Follow-ups',
+                        tasks: [
+                            { name: 'Manager Notes', description: 'Daily notes and follow-ups', critical: false }
+                        ]
+                    }
+                ]
+            },
+            {
+                id: 6,
+                name: 'Kitchen Prep Checklist',
+                color: '6',
+                colorHex: '#009688',
+                sections: [
+                    {
+                        name: 'Morning Prep',
+                        tasks: [
+                            { name: 'All prep surfaces sanitised before use', description: 'Apply food-safe sanitiser, wipe down, allow to air dry before any food contact.', critical: true },
+                            { name: 'Prep list reviewed with kitchen team', description: 'Brief BOH team on today\'s prep quantities and priorities.', critical: false },
+                            { name: 'Mise en place list confirmed against bookings', description: 'Calculate covers × recipe quantities for accurate prep.', critical: false },
+                            { name: 'Stock levels checked before beginning prep', description: 'Verify all required ingredients are in stock and in date.', critical: false }
+                        ]
+                    },
+                    {
+                        name: 'Protein Prep',
+                        tasks: [
+                            { name: 'Proteins stored at correct temperature before prep', description: 'Remove from cold storage immediately before processing. Do not leave at room temp for >30 min.', critical: true },
+                            { name: 'Proteins portioned to correct weights', description: 'Use calibrated scale. Check portion weights against spec sheet.', critical: false },
+                            { name: 'Proteins labelled, dated & stored correctly', description: 'Wrap, label with date & contents, store in designated area.', critical: false },
+                            { name: 'Marinades & rubs applied and refrigerated', description: 'Apply per recipe spec. Refrigerate immediately. Log date/time.', critical: false }
+                        ]
+                    },
+                    {
+                        name: 'Produce Prep',
+                        tasks: [
+                            { name: 'Produce inspected & damaged items removed', description: 'Discard any mouldy, wilting, or otherwise unfit produce.', critical: false },
+                            { name: 'Vegetables washed, cut & stored', description: 'Wash in food-safe sink. Cut to spec. Store in labelled containers.', critical: false },
+                            { name: 'Fresh herbs prepped & stored in water', description: 'Trim stems, place in water, refrigerate upright.', critical: false },
+                            { name: 'Sauces & stocks prepared & temped correctly', description: 'Cook to correct temp. Rapid chill before refrigerating.', critical: false }
+                        ]
+                    },
+                    {
+                        name: 'Final Checks',
+                        tasks: [
+                            { name: 'All prepared items labelled with date & time', description: 'Clearly mark every container with prep date and time.', critical: false },
+                            { name: 'Prep area cleaned and sanitised', description: 'Final clean before service begins. Remove all waste.', critical: false },
+                            { name: 'Prepped items arranged in service-ready order', description: 'Organize by dish so prep can flow smoothly to plating.', critical: false },
+                            { name: 'Temperature logs completed for all chilled items', description: 'Verify all items are at correct temperature before service.', critical: false }
+                        ]
+                    }
+                ]
+            },
+            {
+                id: 7,
+                name: 'Food Temperature Log',
+                color: '7',
+                colorHex: '#1565C0',
+                sections: [
+                    {
+                        name: 'Morning Temperatures (Before Service)',
+                        tasks: [
+                            { name: 'Main Walk-In Cooler', description: 'Ideal: 1-4°C', critical: true },
+                            { name: 'Reach-In Fridge 1', description: 'Ideal: 1-4°C', critical: false },
+                            { name: 'Reach-In Fridge 2', description: 'Ideal: 1-4°C', critical: false },
+                            { name: 'Main Freezer', description: 'Ideal: -18°C or below', critical: false },
+                            { name: 'Reach-In Freezer', description: 'Ideal: -18°C or below', critical: false }
+                        ]
+                    },
+                    {
+                        name: 'Mid-Service Spot Checks',
+                        tasks: [
+                            { name: 'Walk-In Cooler (2pm check)', description: 'Record temperature during service', critical: false },
+                            { name: 'Walk-In Cooler (5pm check)', description: 'Record temperature during service', critical: false },
+                            { name: 'Protein Storage Area', description: 'Verify proteins remain at safe temperature during service', critical: true },
+                            { name: 'Prep Station Cooler', description: 'Check temperature of any items kept at prep station', critical: false }
+                        ]
+                    },
+                    {
+                        name: 'Closing Temperatures (End of Service)',
+                        tasks: [
+                            { name: 'Main Walk-In Cooler', description: 'Ideal: 1-4°C', critical: true },
+                            { name: 'Reach-In Fridge 1', description: 'Ideal: 1-4°C', critical: false },
+                            { name: 'Reach-In Fridge 2', description: 'Ideal: 1-4°C', critical: false },
+                            { name: 'Main Freezer', description: 'Ideal: -18°C or below', critical: false },
+                            { name: 'Reach-In Freezer', description: 'Ideal: -18°C or below', critical: false }
+                        ]
+                    },
+                    {
+                        name: 'Cooked Food Temperatures (Service)',
+                        tasks: [
+                            { name: 'Chicken (internal)', description: 'Must reach 75°C / 165°F', critical: true },
+                            { name: 'Pork (internal)', description: 'Must reach 71°C / 160°F', critical: true },
+                            { name: 'Beef - Rare (internal)', description: 'Target 50-55°C / 120-130°F', critical: false },
+                            { name: 'Beef - Medium (internal)', description: 'Target 60-65°C / 140-150°F', critical: false },
+                            { name: 'Fish (internal)', description: 'Must reach 63°C / 145°F', critical: true }
+                        ]
+                    }
+                ]
+            },
+            {
+                id: 8,
+                name: 'Cleaning Checklist',
+                color: '8',
+                colorHex: '#8BC34A',
+                sections: [
+                    {
+                        name: 'Daily Kitchen Cleaning',
+                        tasks: [
+                            { name: 'Fryer cleaned & oil filtered', description: 'Daily deep clean. Check oil level. Strain or replace if needed.', critical: true },
+                            { name: 'Grill & griddle cleaned', description: 'Scrape cooking surface while hot. Wipe with sanitiser when cooled.', critical: false },
+                            { name: 'Ovens wiped inside & outside', description: 'Remove debris. Wipe surfaces. Check that vents are clear.', critical: false },
+                            { name: 'Range & cooktop cleaned', description: 'Wipe all burners, grates, and surrounding areas. Check pilot lights.', critical: false },
+                            { name: 'Prep tables & counters sanitised', description: 'Scrub with hot soapy water, then food-safe sanitiser. Rinse.', critical: false },
+                            { name: 'Sinks cleaned & sanitised', description: 'Empty, scrub, sanitise all three compartments. Check drains.', critical: false },
+                            { name: 'Floors swept & mopped', description: 'Sweep all debris. Mop with sanitising solution. Allow to dry completely.', critical: false },
+                            { name: 'Walls wiped down (visible splashes)', description: 'Clean any grease or food splashes from walls and equipment.', critical: false }
+                        ]
+                    },
+                    {
+                        name: 'Daily Front of House Cleaning',
+                        tasks: [
+                            { name: 'Dining tables wiped & sanitised', description: 'Wipe each table thoroughly. Disinfect high-touch areas.', critical: false },
+                            { name: 'Chairs cleaned & checked for damage', description: 'Wipe seats and backrests. Check for loose screws or tears.', critical: false },
+                            { name: 'Bar top cleaned & polished', description: 'Wipe and sanitise entire bar top. Polish if appropriate.', critical: false },
+                            { name: 'Floor swept, mopped & dried', description: 'Sweep, mop with sanitiser, ensure floor is dry.', critical: false },
+                            { name: 'Bathrooms cleaned hourly during service', description: 'Check every 2 hours. Clean/sanitise facilities. Restock supplies.', critical: true },
+                            { name: 'Bathroom floor cleaned & dried', description: 'Prevent slips. Use wet floor signs if needed.', critical: false },
+                            { name: 'Mirrors & fixtures polished', description: 'Remove any spots or smudges from mirrors and chrome.', critical: false },
+                            { name: 'Trash cans emptied & replaced', description: 'All trash removed, liners replaced, sanitiser applied if needed.', critical: false }
+                        ]
+                    },
+                    {
+                        name: 'Weekly Deep Clean',
+                        tasks: [
+                            { name: 'Refrigerator/Freezer exteriors cleaned', description: 'Wipe down outside surfaces. Check for leaks or damage.', critical: false },
+                            { name: 'Walls & baseboards cleaned thoroughly', description: 'Scrub walls and lower areas to remove grease buildup.', critical: false },
+                            { name: 'Light fixtures cleaned', description: 'Wipe covers and fixtures. Check bulbs for brightness.', critical: false },
+                            { name: 'Dining chairs upholstery cleaned', description: 'Vacuum and spot-treat any stains on upholstered seating.', critical: false },
+                            { name: 'Trash & recycling areas cleaned', description: 'Clean inside trash storage area. Disinfect all containers.', critical: false },
+                            { name: 'Windows & glass cleaned', description: 'Clean interior windows, glass partitions, and glass doors.', critical: false }
+                        ]
+                    },
+                    {
+                        name: 'Safety & Compliance',
+                        tasks: [
+                            { name: 'Food contact surfaces never mixed with non-food cleaners', description: 'Always use food-safe sanitisers and cleaners on prep areas.', critical: true },
+                            { name: 'All cleaning chemicals stored properly', description: 'Store in locked cabinet away from food. Labels intact.', critical: true },
+                            { name: 'HACCP logs completed', description: 'Record all cleaning, sanitising, and temperature checks.', critical: false },
+                            { name: 'Cleaning audit checklist signed off', description: 'Manager or senior staff verifies all tasks completed.', critical: false }
+                        ]
+                    }
+                ]
+            },
+            {
+                id: 9,
+                name: 'Vendor Order Guide',
+                color: '9',
+                colorHex: '#FFC107',
+                sections: [
+                    {
+                        name: 'Ordering Checklist',
+                        tasks: [
+                            { name: 'Check inventory levels before ordering', description: 'Review par levels for all categories. Calculate quantities needed.', critical: true },
+                            { name: 'Review open items from last order', description: 'Check for items not received or damaged. Follow up with vendor.', critical: false },
+                            { name: 'Confirm vendor delivery schedule', description: 'Verify when truck arrives. Plan deliveries around service times.', critical: false },
+                            { name: 'Inspect order confirmation details', description: 'Check delivery address, date, time, and contact information.', critical: false },
+                            { name: 'Prepare order submission to vendor', description: 'Compile all category orders into single submission.', critical: false },
+                            { name: 'Submit order before deadline', description: 'Meet vendor cutoff time for next-day or scheduled delivery.', critical: true },
+                            { name: 'Confirm order receipt with vendor', description: 'Get confirmation number or email. Note any special instructions.', critical: false },
+                            { name: 'Brief receiving staff on incoming delivery', description: 'Let team know what to expect. Alert to any substitutions.', critical: false }
+                        ]
+                    },
+                    {
+                        name: 'Receiving Checklist',
+                        tasks: [
+                            { name: 'Delivery arrived on scheduled date/time', description: 'Note any delays. Document in order log.', critical: false },
+                            { name: 'Verify delivery matches order', description: 'Cross-check invoice against items received. Count units.', critical: true },
+                            { name: 'Inspect all items for damage or defect', description: 'Check packaging, expiry dates, quality. Reject unfit items.', critical: true },
+                            { name: 'Temperature check on chilled/frozen items', description: 'Verify correct temperature. Document in temperature log.', critical: true },
+                            { name: 'Sign delivery paperwork', description: 'Sign off on correct items received. Note any shortages.', critical: false },
+                            { name: 'Update inventory immediately', description: 'Log received items in inventory system. Update quantities.', critical: false },
+                            { name: 'Store items in correct location', description: 'Place items in assigned storage areas per category.', critical: false },
+                            { name: 'File invoice for accounting', description: 'Keep all receipts and invoices for vendor reconciliation.', critical: false }
+                        ]
+                    },
+                    {
+                        name: 'Vendor Management',
+                        tasks: [
+                            { name: 'Review vendor performance weekly', description: 'Check on-time delivery, accuracy, quality, and pricing.', critical: false },
+                            { name: 'Address quality issues with vendor', description: 'Contact vendor immediately if issues arise. Request credits.', critical: false },
+                            { name: 'Negotiate pricing annually', description: 'Review contracts and pricing. Seek competitive quotes.', critical: false },
+                            { name: 'Maintain vendor contact list & schedules', description: 'Keep updated list of all vendor contacts and delivery schedules.', critical: false }
+                        ]
+                    },
+                    {
+                        name: 'Documentation',
+                        tasks: [
+                            { name: 'Order placed by:', description: 'Name of staff member placing order', critical: false },
+                            { name: 'Delivery received by:', description: 'Name of staff member receiving delivery', critical: false },
+                            { name: 'Date & time of delivery:', description: 'Record exact delivery time', critical: false },
+                            { name: 'Any issues or discrepancies:', description: 'Document any problems with this delivery', critical: false }
+                        ]
+                    }
+                ]
+            },
+            {
+                id: 10,
+                name: 'Waste Log',
+                color: '10',
+                colorHex: '#795548',
+                sections: [
+                    {
+                        name: 'Daily Waste Tracking',
+                        tasks: [
+                            { name: 'Food waste weighed & logged', description: 'Weigh daily food waste. Record quantity in log. Track trends.', critical: true },
+                            { name: 'Reason for waste documented', description: 'Note if waste is: spoilage, over-prep, damaged, trim, or other.', critical: false },
+                            { name: 'High-waste items flagged', description: 'If any item consistently wasted, discuss with kitchen team.', critical: false },
+                            { name: 'Composting waste separated', description: 'If composting program exists, separate organic waste.', critical: false },
+                            { name: 'Recycling sorted correctly', description: 'Separate cardboard, plastic, metal, glass into correct bins.', critical: false },
+                            { name: 'General trash disposed of properly', description: 'Non-recyclable, non-compostable waste to general bin.', critical: false }
+                        ]
+                    },
+                    {
+                        name: 'Weekly Waste Review',
+                        tasks: [
+                            { name: 'Calculate total weekly food waste', description: 'Sum all daily waste weights. Compare to target %.', critical: false },
+                            { name: 'Analyze waste patterns', description: 'Identify if waste is consistent or trending up/down.', critical: false },
+                            { name: 'Cost of waste calculated', description: 'Estimate financial impact of weekly waste.', critical: false },
+                            { name: 'Improvement action plan created', description: 'If waste is high, develop plan to reduce waste.', critical: false },
+                            { name: 'Team briefing on waste reduction', description: 'Share waste targets and improvement ideas with kitchen staff.', critical: false },
+                            { name: 'Vendor invoice matched to waste types', description: 'Identify vendors/products with highest waste impact.', critical: false }
+                        ]
+                    },
+                    {
+                        name: 'Sustainability Goals',
+                        tasks: [
+                            { name: 'Target waste % of food costs set', description: 'Set realistic target waste % (typically 3-5% of food costs).', critical: false },
+                            { name: 'Waste reduction initiatives implemented', description: 'Examples: better forecasting, menu engineering, staff training.', critical: false },
+                            { name: 'Supplier partnerships reviewed', description: 'Work with suppliers to reduce packaging waste.', critical: false },
+                            { name: 'Staff training on waste minimisation', description: 'Educate team on proper portions, storage, and handling.', critical: false }
+                        ]
+                    },
+                    {
+                        name: 'Record Keeping',
+                        tasks: [
+                            { name: 'Daily waste weight recorded', description: 'Log each day\'s total waste in kg or lbs', critical: false },
+                            { name: 'Weekly summary completed', description: 'Calculate weekly total, % of food costs, trends', critical: false },
+                            { name: 'Monthly waste report created', description: 'Track month-to-month trends. Share with management.', critical: false },
+                            { name: 'Logs archived for audit trail', description: 'Keep records for 12 months minimum for compliance.', critical: false }
+                        ]
+                    }
+                ]
+            },
+            {
+                id: 11,
+                name: 'Staff Shift Handover',
+                color: '11',
+                colorHex: '#3F51B5',
+                sections: [
+                    {
+                        name: 'Outgoing Shift Summary',
+                        tasks: [
+                            { name: 'Covers served today', description: 'Total number of covers/customers served.', critical: false },
+                            { name: 'Revenue (if available)', description: 'Total sales or revenue for the shift.', critical: false },
+                            { name: 'Special events or large bookings', description: 'Note any special occasions or VIP tables served.', critical: false },
+                            { name: 'Customer complaints or issues', description: 'Document any complaints and resolutions.', critical: false },
+                            { name: 'Equipment issues reported', description: 'Note any broken or malfunctioning equipment.', critical: true },
+                            { name: 'Staff absences or call-outs', description: 'Note who did not show or left early.', critical: false },
+                            { name: 'Inventory shortages', description: 'Note any items that ran out during shift.', critical: false }
+                        ]
+                    },
+                    {
+                        name: 'Operational Handover',
+                        tasks: [
+                            { name: 'Kitchen status update', description: 'Discuss any issues with food quality, speed, or equipment.', critical: false },
+                            { name: 'Front of house status', description: 'Discuss service quality, guest experience, staff performance.', critical: false },
+                            { name: 'Bar operations update', description: 'Stock levels, any guest issues, staff assignments.', critical: false },
+                            { name: 'Maintenance issues flagged', description: 'List any items that need maintenance or repair.', critical: true },
+                            { name: 'Special requests for next shift', description: 'Any prep, staffing, or operational requests.', critical: false },
+                            { name: 'Safety incidents reported', description: 'Document any accidents or near-misses.', critical: true }
+                        ]
+                    },
+                    {
+                        name: 'Incoming Shift Confirmation',
+                        tasks: [
+                            { name: 'Incoming manager briefed on shift status', description: 'Confirm next manager understands all handover points.', critical: false },
+                            { name: 'Staffing confirmed for next shift', description: 'Verify all scheduled staff arrivals and roles.', critical: false },
+                            { name: 'Bookings reviewed for next shift', description: 'Go through reservations and any special requests.', critical: false },
+                            { name: 'Prep requirements communicated', description: 'Kitchen briefed on covers and menu specials for next shift.', critical: false },
+                            { name: 'Outstanding issues flagged to management', description: 'Any items requiring manager follow-up noted.', critical: false },
+                            { name: 'Handover signed off by both managers', description: 'Incoming and outgoing managers sign handover log.', critical: false }
+                        ]
+                    },
+                    {
+                        name: 'Notes & Follow-ups',
+                        tasks: [
+                            { name: 'General observations from shift', description: 'Any other notes or observations from outgoing shift.', critical: false },
+                            { name: 'Requests for next shift', description: 'Any specific asks or reminders for incoming shift.', critical: false },
+                            { name: 'Compliments or recognitions', description: 'Note any outstanding staff performances to recognize.', critical: false },
+                            { name: 'Action items for management', description: 'Any issues that require management follow-up outside of shift.', critical: false }
+                        ]
+                    }
+                ]
+            },
+            {
+                id: 12,
+                name: 'Incident Report',
+                color: '12',
+                colorHex: '#B71C1C',
+                sections: [
+                    {
+                        name: 'Incident Details',
+                        tasks: [
+                            { name: 'Date of incident', description: 'Exact date incident occurred', critical: true },
+                            { name: 'Time of incident', description: 'Exact time incident occurred', critical: true },
+                            { name: 'Location within restaurant', description: 'Where in the restaurant incident took place', critical: false },
+                            { name: 'Type of incident', description: 'Injury, property damage, customer complaint, safety hazard, etc.', critical: true },
+                            { name: 'Person(s) involved', description: 'Names of staff or customers involved', critical: false },
+                            { name: 'Witnesses present', description: 'Names of anyone who witnessed the incident', critical: false },
+                            { name: 'Detailed description of incident', description: 'Factual, objective description of what happened', critical: true }
+                        ]
+                    },
+                    {
+                        name: 'Injury Assessment (if applicable)',
+                        tasks: [
+                            { name: 'Injury type & severity', description: 'Description of injury and how serious it is', critical: true },
+                            { name: 'First aid administered', description: 'What first aid was provided on-site', critical: false },
+                            { name: 'Medical attention required', description: 'Was medical help/hospital visit needed?', critical: true },
+                            { name: 'Names of injured person(s)', description: 'Full names of anyone injured', critical: false },
+                            { name: 'Contact information for injured party', description: 'Phone, address, and emergency contact', critical: false },
+                            { name: 'Insurance claim required', description: 'Do injured party plan to claim on insurance?', critical: false }
+                        ]
+                    },
+                    {
+                        name: 'Root Cause Analysis',
+                        tasks: [
+                            { name: 'What directly caused the incident', description: 'Immediate cause (e.g., wet floor, equipment malfunction)', critical: true },
+                            { name: 'Why did that cause exist', description: 'Underlying reason (e.g., lack of cleaning schedule, poor training)', critical: false },
+                            { name: 'Was procedure being followed', description: 'Were staff following correct safety procedures?', critical: false },
+                            { name: 'Equipment involved', description: 'If equipment-related, describe what equipment & condition', critical: false },
+                            { name: 'Environmental factors', description: 'Lighting, temperature, noise, congestion, etc.', critical: false }
+                        ]
+                    },
+                    {
+                        name: 'Action Plan & Prevention',
+                        tasks: [
+                            { name: 'Immediate corrective action taken', description: 'What was done immediately to resolve the situation', critical: false },
+                            { name: 'Long-term preventive measures', description: 'How will this incident be prevented in future', critical: true },
+                            { name: 'Staff training required', description: 'Any training needed to prevent recurrence', critical: false },
+                            { name: 'Equipment maintenance scheduled', description: 'Any equipment inspection or repair required', critical: false },
+                            { name: 'Responsible party for action items', description: 'Who is responsible for implementing prevention measures', critical: false },
+                            { name: 'Timeline for completion', description: 'When should prevention measures be completed', critical: false }
+                        ]
+                    },
+                    {
+                        name: 'Sign-off',
+                        tasks: [
+                            { name: 'Reported by (Manager)', description: 'Name and signature of reporting manager', critical: false },
+                            { name: 'Date reported', description: 'Date this incident report was completed', critical: false },
+                            { name: 'Reviewed by (Owner/Director)', description: 'Name and signature of owner/director review', critical: false },
+                            { name: 'Follow-up review date', description: 'When will prevention measures be reviewed', critical: false }
+                        ]
+                    }
+                ]
+            },
+            {
+                id: 13,
+                name: 'Manager Daily Report',
+                color: '13',
+                colorHex: '#37474F',
+                sections: [
+                    {
+                        name: 'Daily Overview',
+                        tasks: [
+                            { name: 'Date', description: 'Date of this daily report', critical: false },
+                            { name: 'Total covers', description: 'Number of customers served today', critical: false },
+                            { name: 'Total revenue', description: 'Total sales for the day', critical: false },
+                            { name: 'Average spend per cover', description: 'Total revenue ÷ total covers', critical: false },
+                            { name: 'Staff on duty', description: 'Number of staff working today', critical: false },
+                            { name: 'Service hours', description: 'Hours of service (e.g., 11am-11pm)', critical: false }
+                        ]
+                    },
+                    {
+                        name: 'Operational Performance',
+                        tasks: [
+                            { name: 'Opening checklist completed on time', description: 'Yes/No - were all opening tasks completed before service?', critical: true },
+                            { name: 'Closing checklist completed on time', description: 'Yes/No - were all closing tasks completed after service?', critical: true },
+                            { name: 'Food quality issues', description: 'Any complaints or issues with food quality today', critical: false },
+                            { name: 'Service issues', description: 'Any complaints or issues with service delivery today', critical: false },
+                            { name: 'Equipment failures', description: 'Any equipment that broke down or failed today', critical: false },
+                            { name: 'Safety incidents', description: 'Any accidents, injuries, or safety concerns today', critical: true }
+                        ]
+                    },
+                    {
+                        name: 'Staff & Labor',
+                        tasks: [
+                            { name: 'Staff absences', description: 'Any unexpected absences or call-outs', critical: false },
+                            { name: 'Staff performance highlights', description: 'Any staff who performed exceptionally well today', critical: false },
+                            { name: 'Staff issues or concerns', description: 'Any conflicts, concerns, or performance issues noted', critical: false },
+                            { name: 'Training needs identified', description: 'Any staff who need additional training', critical: false },
+                            { name: 'Estimated labor cost %', description: 'Calculated labor cost as % of revenue', critical: false }
+                        ]
+                    },
+                    {
+                        name: 'Customer Feedback',
+                        tasks: [
+                            { name: 'Compliments received', description: 'Positive feedback from customers today', critical: false },
+                            { name: 'Complaints received', description: 'Negative feedback or complaints from customers', critical: false },
+                            { name: 'Guest satisfaction overall', description: 'Overall assessment of guest experience (1-5 scale)', critical: false },
+                            { name: 'Online reviews checked', description: 'Any new Google/TripAdvisor reviews since yesterday?', critical: false }
+                        ]
+                    },
+                    {
+                        name: 'Financial & Inventory',
+                        tasks: [
+                            { name: 'Till reconciliation completed', description: 'Cash till counted and reconciled with POS', critical: true },
+                            { name: 'Discrepancies noted', description: 'Any variances between till and system', critical: false },
+                            { name: 'Inventory issues', description: 'Any stock shortages or damaged goods noted', critical: false },
+                            { name: 'Orders placed', description: 'Any supplier orders placed today', critical: false },
+                            { name: 'Food cost estimate', description: 'Estimated food cost as % of revenue today', critical: false }
+                        ]
+                    },
+                    {
+                        name: 'Manager Notes & Action Items',
+                        tasks: [
+                            { name: 'Summary of day', description: 'Overall summary of how the day went', critical: false },
+                            { name: 'Priorities for tomorrow', description: 'Key items to focus on tomorrow', critical: false },
+                            { name: 'Action items for management', description: 'Anything requiring owner/director follow-up', critical: false },
+                            { name: 'Additional notes', description: 'Any other observations or comments', critical: false }
+                        ]
+                    }
+                ]
+            }
+        ];
+
+        // STATE MANAGEMENT
+        let appState = {
+            currentView: 'dashboard',
+            restaurantName: 'My Restaurant',
+            restaurantAddress: '123 Main Street',
+            managerName: 'Manager Name',
+            logo: null,
+            templates: {}
+        };
+
+        // INITIALIZE STATE
+        function initializeState() {
+            const saved = localStorage.getItem('restaurantOpsState');
+            if (saved) {
+                appState = JSON.parse(saved);
+            } else {
+                initializeTemplates();
+            }
+        }
+
+        function initializeTemplates() {
+            TEMPLATES.forEach(template => {
+                appState.templates[template.id] = {
+                    sections: {}
+                };
+
+                if (template.isSchedule) {
+                    appState.templates[template.id].schedule = {};
+                    template.sections[0].roles.forEach(role => {
+                        appState.templates[template.id].schedule[role] = {
+                            mon: '', tue: '', wed: '', thu: '', fri: '', sat: '', sun: ''
+                        };
+                    });
+                    appState.templates[template.id].laborData = {
+                        avgRate: 15,
+                        projectedRevenue: 5000
+                    };
+                } else if (template.isInventory) {
+                    appState.templates[template.id].inventory = {};
+                    template.sections[0].categories && Object.entries(template.sections[0].categories).forEach(([cat, items]) => {
+                        items.forEach(item => {
+                            appState.templates[template.id].inventory[item] = {
+                                qty: 0,
+                                unit: 'units',
+                                par: 20,
+                                reorder: false
+                            };
+                        });
+                    });
+                } else {
+                    template.sections.forEach((section, idx) => {
+                        appState.templates[template.id].sections[idx] = {};
+                        section.tasks.forEach((task, taskIdx) => {
+                            appState.templates[template.id].sections[idx][taskIdx] = {
+                                checked: false,
+                                initials: '',
+                                time: '',
+                                name: task.name,
+                                description: task.description,
+                                critical: task.critical
+                            };
+                        });
+                    });
+                }
+            });
+            saveState();
+        }
+
+        function saveState() {
+            localStorage.setItem('restaurantOpsState', JSON.stringify(appState));
+        }
+
+        // UI RENDERING
+        function renderNavigation() {
+            const navTabs = document.getElementById('navTabs');
+            navTabs.innerHTML = '';
+
+            const dashboardBtn = document.createElement('button');
+            dashboardBtn.className = 'nav-tab active';
+            dashboardBtn.textContent = 'Dashboard';
+            dashboardBtn.onclick = () => showView('dashboard');
+            navTabs.appendChild(dashboardBtn);
+
+            TEMPLATES.forEach(template => {
+                const btn = document.createElement('button');
+                btn.className = 'nav-tab';
+                btn.setAttribute('data-color', template.color);
+                btn.textContent = template.name;
+                btn.onclick = () => showView(`template-${template.id}`);
+                navTabs.appendChild(btn);
+            });
+        }
+
+        function renderDashboard() {
+            let html = `
+                <div class="template-content">
+                    <h1 class="dashboard-title">Operations Dashboard</h1>
+                    <p class="dashboard-subtitle">${appState.restaurantName} — ${new Date().toLocaleDateString('en-US', {weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'})}</p>
+
+                    <div class="dashboard-buttons">
+                        <button class="btn btn-primary" onclick="resetAllChecklists()">Reset All Checklists</button>
+                        <button class="btn btn-primary" onclick="window.print()">Print All</button>
+                    </div>
+
+                    <div class="overall-progress">
+                        <div class="progress-label">Overall Operations Completion</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: ${getOverallProgress()}%">
+                                ${getOverallProgress()}% Complete
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="template-grid">
+            `;
+
+            TEMPLATES.forEach(template => {
+                const progress = getTemplateProgress(template.id);
+                const completed = progress === 100;
+                html += `
+                    <div class="template-card" style="--critical-bg: rgba(${hexToRgb(template.colorHex)}, 0.08); color: ${template.colorHex}">
+                        <div class="card-color-band"></div>
+                        <div class="card-content">
+                            <div class="card-title">${template.name}</div>
+                            <div class="card-progress">
+                                <div class="card-progress-bar">
+                                    <div class="card-progress-fill" style="width: ${progress}%"></div>
+                                </div>
+                            </div>
+                            <div class="card-stats">${getTemplateStats(template.id)}</div>
+                            <button class="card-link" onclick="showView('template-${template.id}')">
+                                Open Template → ${completed ? '<span class="card-complete">✓</span>' : ''}
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+
+            html += `
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('contentArea').innerHTML = html;
+        }
+
+        function renderTemplate(templateId) {
+            const template = TEMPLATES.find(t => t.id === templateId);
+            if (!template) return;
+
+            let html = `<div style="--critical-bg: rgba(${hexToRgb(template.colorHex)}, 0.08); color: ${template.colorHex}">`;
+
+            // HEADER
+            html += `
+                <div class="template-header" style="background-color: ${template.colorHex}">
+                    <div class="logo-box" id="logoBox" style="${appState.logo ? `background-image: url('${appState.logo}')` : ''}">
+                        ${!appState.logo ? 'LOGO' : ''}
+                    </div>
+                    <div class="header-info">
+                        <div class="header-name">${appState.restaurantName}</div>
+                        <div class="header-address">${appState.restaurantAddress}</div>
+                        <div class="header-manager">Manager: <input type="text" id="headerManager" value="${appState.managerName}" placeholder="Manager name" style="color: white; border-bottom-color: rgba(255,255,255,0.4)"></div>
+                    </div>
+                    <div class="header-right">
+                        <h1>${template.name}</h1>
+                        <div class="header-date">Week of: ${new Date().toLocaleDateString('en-US', {month: 'short', day: 'numeric'})}</div>
+                    </div>
+                </div>
+            `;
+
+            // CONTENT
+            html += '<div class="template-content">';
+
+            if (template.isSchedule) {
+                html += renderScheduleTemplate(template);
+            } else if (template.isInventory) {
+                html += renderInventoryTemplate(template);
+            } else {
+                html += renderChecklistTemplate(template);
+            }
+
+            html += '</div></div>';
+
+            document.getElementById('contentArea').innerHTML = html;
+
+            // ATTACH EVENT LISTENERS
+            if (!template.isSchedule && !template.isInventory) {
+                attachChecklistListeners(templateId);
+            }
+
+            // UPDATE HEADER MANAGER NAME ON BLUR
+            const managerInput = document.getElementById('headerManager');
+            if (managerInput) {
+                managerInput.addEventListener('blur', () => {
+                    appState.managerName = managerInput.value;
+                    saveState();
+                });
+            }
+        }
+
+        function renderChecklistTemplate(template) {
+            let html = '';
+            template.sections.forEach((section, sectionIdx) => {
+                html += `
+                    <div class="section" style="--critical-bg: rgba(${hexToRgb(template.colorHex)}, 0.08)">
+                        <div class="section-header" style="background-color: ${template.colorHex}">
+                            <span style="color: ${template.colorHex}; opacity: 0.3; margin-right: 8px;">●</span> ${section.name}
+                        </div>
+                        <div class="section-content">
+                `;
+
+                section.tasks.forEach((task, taskIdx) => {
+                    const taskData = appState.templates[template.id].sections[sectionIdx][taskIdx];
+                    const criticalClass = taskData.critical ? 'critical' : '';
+                    html += `
+                        <div class="task-row ${criticalClass}" style="--critical-bg: rgba(${hexToRgb(template.colorHex)}, 0.08); color: ${template.colorHex}">
+                            <div class="checkbox ${taskData.checked ? 'checked' : ''}" data-section="${sectionIdx}" data-task="${taskIdx}" style="${taskData.checked ? `background-color: ${template.colorHex}; border-color: ${template.colorHex}` : ''}">
+                                ${taskData.checked ? '✓' : ''}
+                            </div>
+                            <div class="task-content">
+                                <div class="task-name">${taskData.name}</div>
+                                <div class="task-description">${taskData.description}</div>
+                                <div class="task-fields">
+                                    <div class="field-group">
+                                        <label>Initials:</label>
+                                        <input type="text" class="field-input initials-input" placeholder="___" data-section="${sectionIdx}" data-task="${taskIdx}" value="${taskData.initials}" style="border-bottom-color: ${template.colorHex}; opacity: ${taskData.initials ? '1' : '0.4'}">
+                                    </div>
+                                    <div class="field-group">
+                                        <label>Time:</label>
+                                        <input type="text" class="field-input time-input" placeholder="HH:MM" data-section="${sectionIdx}" data-task="${taskIdx}" value="${taskData.time}" style="border-bottom-color: ${template.colorHex}; opacity: ${taskData.time ? '1' : '0.4'}">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                html += `
+                            <button class="add-row-btn" style="color: ${template.colorHex}" onclick="addTaskRow(${template.id}, ${sectionIdx})">+ Add Item</button>
+                        </div>
+                    </div>
+                `;
+            });
+            return html;
+        }
+
+        function renderScheduleTemplate(template) {
+            let html = `
+                <div class="section" style="--critical-bg: rgba(${hexToRgb(template.colorHex)}, 0.08)">
+                    <div class="section-header" style="background-color: ${template.colorHex}">
+                        <span style="color: ${template.colorHex}; opacity: 0.3; margin-right: 8px;">●</span> Staff Schedule
+                    </div>
+                    <div class="section-content">
+                        <table class="schedule-table">
+                            <thead>
+                                <tr>
+                                    <th>Role</th>
+                                    <th>Mon</th>
+                                    <th>Tue</th>
+                                    <th>Wed</th>
+                                    <th>Thu</th>
+                                    <th>Fri</th>
+                                    <th>Sat</th>
+                                    <th>Sun</th>
+                                    <th>Total Hrs</th>
+                                    <th>Est. Cost</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+            `;
+
+            template.sections[0].roles.forEach(role => {
+                const schedule = appState.templates[template.id].schedule[role];
+                let total = 0;
+                const days = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
+                days.forEach(day => {
+                    const hours = parseFloat(schedule[day]) || 0;
+                    total += hours;
+                });
+                const estCost = total * (appState.templates[template.id].laborData.avgRate || 15);
+
+                html += `
+                    <tr>
+                        <td>${role}</td>
+                        ${days.map(day => `
+                            <td><input type="number" class="schedule-input" data-role="${role}" data-day="${day}" value="${schedule[day]}" placeholder="0" step="0.5" min="0" max="24"></td>
+                        `).join('')}
+                        <td>${total.toFixed(1)}</td>
+                        <td>$${estCost.toFixed(2)}</td>
+                    </tr>
+                `;
+            });
+
+            html += `
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <div class="section-header" style="background-color: ${template.colorHex}">
+                        <span style="color: ${template.colorHex}; opacity: 0.3; margin-right: 8px;">●</span> Labor Cost Calculator
+                    </div>
+                    <div class="labor-calculator">
+                        <div class="calc-field">
+                            <div class="calc-label">Total Hours This Week</div>
+                            <div class="calc-value" id="totalHours">0.0</div>
+                        </div>
+                        <div class="calc-field">
+                            <div class="calc-label">Average Hourly Rate (£/$)</div>
+                            <input type="number" class="calc-input labor-rate" id="laborRate" value="${appState.templates[template.id].laborData.avgRate}" step="0.50" min="0">
+                        </div>
+                        <div class="calc-field">
+                            <div class="calc-label">Estimated Total Labor Cost</div>
+                            <div class="calc-value" id="laborCost">$0.00</div>
+                        </div>
+                        <div class="calc-field">
+                            <div class="calc-label">Projected Weekly Revenue (£/$)</div>
+                            <input type="number" class="calc-input labor-revenue" id="laborRevenue" value="${appState.templates[template.id].laborData.projectedRevenue}" step="100" min="0">
+                        </div>
+                        <div class="calc-field">
+                            <div class="calc-label">Labor Cost %</div>
+                            <div class="calc-value" id="laborPercent" style="color: green;">0%</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            return html;
+        }
+
+        function renderInventoryTemplate(template) {
+            let html = '';
+
+            // Inventory items
+            const categories = template.sections[0].categories;
+            for (const [category, items] of Object.entries(categories)) {
+                html += `
+                    <div class="section" style="--critical-bg: rgba(${hexToRgb(template.colorHex)}, 0.08)">
+                        <div class="section-header" style="background-color: ${template.colorHex}">
+                            <span style="color: ${template.colorHex}; opacity: 0.3; margin-right: 8px;">●</span> ${category}
+                        </div>
+                        <div class="section-content">
+                            <table class="inventory-table">
+                                <thead>
+                                    <tr>
+                                        <th>Item</th>
+                                        <th>Current Qty</th>
+                                        <th>Unit</th>
+                                        <th>Par Level</th>
+                                        <th>Status</th>
+                                        <th>Reorder?</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                `;
+
+                items.forEach(item => {
+                    const inv = appState.templates[template.id].inventory[item];
+                    const status = inv.qty >= (inv.par * 0.7) ? 'OK' : (inv.qty >= (inv.par * 0.3) ? 'LOW' : 'CRITICAL');
+                    const statusColor = status === 'OK' ? '#4CAF50' : (status === 'LOW' ? '#FFC107' : '#DC3545');
+                    const badgeClass = status === 'OK' ? 'badge-ok' : (status === 'LOW' ? 'badge-low' : 'badge-critical');
+
+                    html += `
+                        <tr>
+                            <td>${item}</td>
+                            <td><input type="number" class="inventory-qty" data-item="${item}" value="${inv.qty}" min="0" step="1"></td>
+                            <td><input type="text" class="inventory-unit" data-item="${item}" value="${inv.unit}" style="width: 60px;"></td>
+                            <td><input type="number" class="inventory-par" data-item="${item}" value="${inv.par}" min="0" step="1"></td>
+                            <td><span class="badge ${badgeClass}">${status}</span></td>
+                            <td><input type="checkbox" class="inventory-reorder" data-item="${item}" ${inv.reorder ? 'checked' : ''}></td>
+                        </tr>
+                    `;
+                });
+
+                html += `
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                `;
+            }
+
+            // Delivery tracking
+            html += `
+                <div class="section">
+                    <div class="section-header" style="background-color: ${template.colorHex}">
+                        <span style="color: ${template.colorHex}; opacity: 0.3; margin-right: 8px;">●</span> Delivery Tracking
+                    </div>
+                    <div class="section-content">
+                        <div class="task-row" style="display: block; padding: 12px 16px; border: none;">
+                            <div style="display: grid; gap: 16px;">
+                                <div style="display: grid; grid-template-columns: 150px 1fr; gap: 12px; align-items: center;">
+                                    <label style="font-weight: 600; font-size: 12px;">Date Received:</label>
+                                    <input type="date" class="delivery-date" style="border: 1px solid #ddd; padding: 8px; border-radius: 4px;">
+                                </div>
+                                <div style="display: grid; grid-template-columns: 150px 1fr; gap: 12px; align-items: center;">
+                                    <label style="font-weight: 600; font-size: 12px;">Supplier Name:</label>
+                                    <input type="text" class="delivery-supplier" placeholder="Supplier name" style="border: 1px solid #ddd; padding: 8px; border-radius: 4px;">
+                                </div>
+                                <div style="display: grid; grid-template-columns: 150px 1fr; gap: 12px; align-items: center;">
+                                    <label style="font-weight: 600; font-size: 12px;">Delivery Ref #:</label>
+                                    <input type="text" class="delivery-ref" placeholder="Reference number" style="border: 1px solid #ddd; padding: 8px; border-radius: 4px;">
+                                </div>
+                                <div style="display: grid; grid-template-columns: 150px 1fr; gap: 12px; align-items: center;">
+                                    <label style="font-weight: 600; font-size: 12px;">Received By:</label>
+                                    <input type="text" class="delivery-initials" placeholder="Initials" style="border: 1px solid #ddd; padding: 8px; border-radius: 4px; width: 60px;">
+                                </div>
+                                <div style="display: grid; grid-template-columns: 150px 1fr; gap: 12px; align-items: center;">
+                                    <label style="font-weight: 600; font-size: 12px;">Temperature:</label>
+                                    <input type="text" class="delivery-temp" placeholder="°C" style="border: 1px solid #ddd; padding: 8px; border-radius: 4px; width: 80px;">
+                                </div>
+                                <div style="display: grid; grid-template-columns: 150px 1fr; gap: 12px;">
+                                    <label style="font-weight: 600; font-size: 12px;">Issues:</label>
+                                    <textarea class="delivery-issues" placeholder="Any rejected items or issues" style="border: 1px solid #ddd; padding: 8px; border-radius: 4px; min-height: 60px;"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            return html;
+        }
+
+        function attachChecklistListeners(templateId) {
+            const template = TEMPLATES.find(t => t.id === templateId);
+            const colorHex = template.colorHex;
+
+            // CHECKBOXES
+            document.querySelectorAll(`[data-section]`).forEach(checkbox => {
+                checkbox.addEventListener('click', function() {
+                    const sectionIdx = parseInt(this.dataset.section);
+                    const taskIdx = parseInt(this.dataset.task);
+                    const taskData = appState.templates[templateId].sections[sectionIdx][taskIdx];
+                    taskData.checked = !taskData.checked;
+                    this.classList.toggle('checked');
+                    if (taskData.checked) {
+                        this.style.backgroundColor = colorHex;
+                        this.style.borderColor = colorHex;
+                        this.textContent = '✓';
+                    } else {
+                        this.style.backgroundColor = 'white';
+                        this.style.borderColor = '#ddd';
+                        this.textContent = '';
+                    }
+                    saveState();
+                    updateDashboard();
+                });
+            });
+
+            // INITIALS & TIME INPUTS
+            document.querySelectorAll('.initials-input').forEach(input => {
+                input.addEventListener('blur', function() {
+                    const sectionIdx = parseInt(this.dataset.section);
+                    const taskIdx = parseInt(this.dataset.task);
+                    appState.templates[templateId].sections[sectionIdx][taskIdx].initials = this.value;
+                    this.style.opacity = this.value ? '1' : '0.4';
+                    saveState();
+                });
+            });
+
+            document.querySelectorAll('.time-input').forEach(input => {
+                input.addEventListener('blur', function() {
+                    const sectionIdx = parseInt(this.dataset.section);
+                    const taskIdx = parseInt(this.dataset.task);
+                    appState.templates[templateId].sections[sectionIdx][taskIdx].time = this.value;
+                    this.style.opacity = this.value ? '1' : '0.4';
+                    saveState();
+                });
+            });
+        }
+
+        // SCHEDULE & INVENTORY UPDATES
+        document.addEventListener('change', function(e) {
+            if (e.target.classList.contains('schedule-input')) {
+                const role = e.target.dataset.role;
+                const day = e.target.dataset.day;
+                const templateId = parseInt(document.querySelector('[data-color]')?.dataset.color) || 3;
+                appState.templates[3].schedule[role][day] = e.target.value;
+                saveState();
+                updateScheduleCalculations();
+            }
+
+            if (e.target.classList.contains('labor-rate') || e.target.classList.contains('labor-revenue')) {
+                appState.templates[3].laborData.avgRate = parseFloat(document.getElementById('laborRate').value) || 0;
+                appState.templates[3].laborData.projectedRevenue = parseFloat(document.getElementById('laborRevenue').value) || 0;
+                saveState();
+                updateScheduleCalculations();
+            }
+
+            if (e.target.classList.contains('inventory-qty') || e.target.classList.contains('inventory-unit') ||
+                e.target.classList.contains('inventory-par') || e.target.classList.contains('inventory-reorder')) {
+                const item = e.target.dataset.item;
+                const qty = document.querySelector(`.inventory-qty[data-item="${item}"]`)?.value || 0;
+                const unit = document.querySelector(`.inventory-unit[data-item="${item}"]`)?.value || '';
+                const par = document.querySelector(`.inventory-par[data-item="${item}"]`)?.value || 0;
+                const reorder = document.querySelector(`.inventory-reorder[data-item="${item}"]`)?.checked || false;
+
+                appState.templates[4].inventory[item] = { qty: parseFloat(qty), unit, par: parseFloat(par), reorder };
+                saveState();
+
+                // Update status
+                const status = qty >= (par * 0.7) ? 'OK' : (qty >= (par * 0.3) ? 'LOW' : 'CRITICAL');
+                const row = e.target.closest('tr');
+                const statusCell = row.querySelector('td:nth-child(5)');
+                const badgeClass = status === 'OK' ? 'badge-ok' : (status === 'LOW' ? 'badge-low' : 'badge-critical');
+                statusCell.innerHTML = `<span class="badge ${badgeClass}">${status}</span>`;
+            }
+        });
+
+        function updateScheduleCalculations() {
+            const roles = TEMPLATES[2].sections[0].roles;
+            let totalHours = 0;
+            const days = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
+
+            roles.forEach(role => {
+                const schedule = appState.templates[3].schedule[role];
+                days.forEach(day => {
+                    totalHours += parseFloat(schedule[day]) || 0;
+                });
+            });
+
+            const avgRate = appState.templates[3].laborData.avgRate || 0;
+            const laborCost = totalHours * avgRate;
+            const projectedRevenue = appState.templates[3].laborData.projectedRevenue || 0;
+            const laborPercent = projectedRevenue > 0 ? ((laborCost / projectedRevenue) * 100).toFixed(1) : 0;
+
+            const totalHoursEl = document.getElementById('totalHours');
+            const laborCostEl = document.getElementById('laborCost');
+            const laborPercentEl = document.getElementById('laborPercent');
+
+            if (totalHoursEl) totalHoursEl.textContent = totalHours.toFixed(1);
+            if (laborCostEl) laborCostEl.textContent = `$${laborCost.toFixed(2)}`;
+            if (laborPercentEl) {
+                laborPercentEl.textContent = `${laborPercent}%`;
+                const color = laborPercent < 28 ? '#4CAF50' : (laborPercent < 32 ? '#FFC107' : '#DC3545');
+                laborPercentEl.style.color = color;
+            }
+        }
+
+        function updateDashboard() {
+            if (appState.currentView === 'dashboard') {
+                renderDashboard();
+            }
+        }
+
+        function getTemplateProgress(templateId) {
+            const template = TEMPLATES.find(t => t.id === templateId);
+            if (!template) return 0;
+
+            if (template.isSchedule || template.isInventory) return 0;
+
+            let total = 0, checked = 0;
+            Object.values(appState.templates[templateId].sections).forEach(section => {
+                Object.values(section).forEach(task => {
+                    total++;
+                    if (task.checked) checked++;
+                });
+            });
+
+            return total > 0 ? Math.round((checked / total) * 100) : 0;
+        }
+
+        function getOverallProgress() {
+            let totalTasks = 0, checkedTasks = 0;
+
+            TEMPLATES.forEach(template => {
+                if (!template.isSchedule && !template.isInventory) {
+                    Object.values(appState.templates[template.id].sections).forEach(section => {
+                        Object.values(section).forEach(task => {
+                            totalTasks++;
+                            if (task.checked) checkedTasks++;
+                        });
+                    });
+                }
+            });
+
+            return totalTasks > 0 ? Math.round((checkedTasks / totalTasks) * 100) : 0;
+        }
+
+        function getTemplateStats(templateId) {
+            const template = TEMPLATES.find(t => t.id === templateId);
+            if (!template || template.isSchedule || template.isInventory) return '—';
+
+            let total = 0, checked = 0;
+            Object.values(appState.templates[templateId].sections).forEach(section => {
+                Object.values(section).forEach(task => {
+                    total++;
+                    if (task.checked) checked++;
+                });
+            });
+
+            return `${checked} of ${total} tasks complete`;
+        }
+
+        function hexToRgb(hex) {
+            const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+            return result ? `${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)}` : '0, 0, 0';
+        }
+
+        function showView(viewId) {
+            appState.currentView = viewId;
+            saveState();
+
+            // UPDATE NAV
+            document.querySelectorAll('.nav-tab').forEach(tab => tab.classList.remove('active'));
+            if (viewId === 'dashboard') {
+                document.querySelectorAll('.nav-tab')[0].classList.add('active');
+                renderDashboard();
+            } else {
+                const templateId = parseInt(viewId.split('-')[1]);
+                const template = TEMPLATES.find(t => t.id === templateId);
+                const navTab = Array.from(document.querySelectorAll('.nav-tab')).find(tab => tab.textContent === template.name);
+                if (navTab) navTab.classList.add('active');
+                renderTemplate(templateId);
+            }
+        }
+
+        function addTaskRow(templateId, sectionIdx) {
+            const newTaskIdx = Object.keys(appState.templates[templateId].sections[sectionIdx]).length;
+            appState.templates[templateId].sections[sectionIdx][newTaskIdx] = {
+                checked: false,
+                initials: '',
+                time: '',
+                name: 'New Task',
+                description: '',
+                critical: false
+            };
+            saveState();
+            renderTemplate(templateId);
+        }
+
+        function resetAllChecklists() {
+            if (confirm('Are you sure you want to reset all checklists for today?')) {
+                TEMPLATES.forEach(template => {
+                    if (!template.isSchedule && !template.isInventory) {
+                        template.sections.forEach((section, sectionIdx) => {
+                            section.tasks.forEach((task, taskIdx) => {
+                                appState.templates[template.id].sections[sectionIdx][taskIdx].checked = false;
+                                appState.templates[template.id].sections[sectionIdx][taskIdx].initials = '';
+                                appState.templates[template.id].sections[sectionIdx][taskIdx].time = '';
+                            });
+                        });
+                    }
+                });
+                saveState();
+                renderDashboard();
+            }
+        }
+
+        // SETTINGS MODAL
+        document.getElementById('settingsBtn').addEventListener('click', () => {
+            document.getElementById('settingsModal').classList.add('active');
+            document.getElementById('settingsName').value = appState.restaurantName;
+            document.getElementById('settingsAddress').value = appState.restaurantAddress;
+            document.getElementById('settingsManager').value = appState.managerName;
+        });
+
+        document.getElementById('closeSettingsBtn').addEventListener('click', () => {
+            document.getElementById('settingsModal').classList.remove('active');
+        });
+
+        document.getElementById('applySettingsBtn').addEventListener('click', () => {
+            appState.restaurantName = document.getElementById('settingsName').value;
+            appState.restaurantAddress = document.getElementById('settingsAddress').value;
+            appState.managerName = document.getElementById('settingsManager').value;
+            saveState();
+            if (appState.currentView === 'dashboard') {
+                renderDashboard();
+            } else {
+                const templateId = parseInt(appState.currentView.split('-')[1]);
+                renderTemplate(templateId);
+            }
+            document.getElementById('settingsModal').classList.remove('active');
+        });
+
+        document.getElementById('logoPreview').addEventListener('click', () => {
+            document.getElementById('logoUpload').click();
+        });
+
+        document.getElementById('logoUpload').addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    appState.logo = event.target.result;
+                    document.getElementById('logoPreview').style.backgroundImage = `url('${appState.logo}')`;
+                    document.getElementById('logoPreview').textContent = '';
+                    saveState();
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Initialize
+        window.addEventListener('load', () => {
+            initializeState();
+            renderNavigation();
+            renderDashboard();
+        });
+
+        // Close settings on outside click
+        document.getElementById('settingsModal').addEventListener('click', (e) => {
+            if (e.target === document.getElementById('settingsModal')) {
+                document.getElementById('settingsModal').classList.remove('active');
+            }
+        });
+    </script>
+</body>
+</html>
